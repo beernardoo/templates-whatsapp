@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Templates WhatsApp Business</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">💬</span>
+        <div class="logo-text">
+          <h1>Templates WhatsApp</h1>
+          <span class="logo-sub">Gerador de Mensagens Business</span>
+        </div>
+      </div>
+      <div class="badge-categoria" id="categoria-badge">Selecione a categoria</div>
+      <button class="btn-atualizar-precos" id="btn-atualizar-precos" title="Atualizar preços da Meta">
+        🔄 <span id="btn-atualizar-texto">Atualizar preços</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Steps bar (oculto no home e nas telas de análise) -->
+  <div class="steps-bar hidden" id="steps-bar">
+    <div class="step" id="step-indicator-1"><span class="step-num">1</span><span class="step-label">Tipo</span></div>
+    <span class="step-arrow">›</span>
+    <div class="step" id="step-indicator-2"><span class="step-num">2</span><span class="step-label">Variáveis</span></div>
+    <span class="step-arrow">›</span>
+    <div class="step" id="step-indicator-3"><span class="step-num">3</span><span class="step-label">Templates</span></div>
+  </div>
+
+  <main class="main">
+
+    <!-- PANEL 0: Home -->
+    <section class="panel" id="panel-0">
+      <div class="home-header">
+        <h2>Gerador de Templates WhatsApp</h2>
+        <p>Escolha a categoria e o modo de criação</p>
+      </div>
+      <div class="cat-grid">
+
+        <!-- Card UTILITY -->
+        <div class="cat-card cat-utility">
+          <div class="cat-top">
+            <span class="cat-icon">✅</span>
+            <span class="cat-pill cat-pill-utility">UTILITY</span>
+          </div>
+          <h3 class="cat-title">Operacional &amp; Transacional</h3>
+          <p class="cat-desc">Mensagens factuais sem apelo comercial. Alta taxa de aprovação.</p>
+          <ul class="cat-list">
+            <li>Confirmações e avisos operacionais</li>
+            <li>Atualizações de status e cadastro</li>
+            <li>Cobrança informativa e documentos</li>
+          </ul>
+
+          <!-- Bloco de preço Utility -->
+          <div class="cat-preco" id="preco-utility">
+            <div class="preco-row">
+              <span class="preco-cifrao">$</span>
+              <span class="preco-valor" id="preco-valor-utility">0.0068</span>
+              <div class="preco-info">
+                <span class="preco-unidade">por mensagem</span>
+                <span class="preco-moeda">USD · Brasil</span>
+              </div>
+              <span class="preco-status-icon" id="preco-status-utility" title="Carregando...">⏳</span>
+            </div>
+            <div class="preco-footer">
+              <span class="preco-atualizado" id="preco-atualizado-utility">Verificando preços...</span>
+              <a href="https://business.whatsapp.com/products/platform-pricing?lang=pt_BR&country=Brasil&currency=D%C3%B3lar%20(USD)&category=Utilidade"
+                 target="_blank" class="preco-link" title="Ver preços oficiais Meta">↗</a>
+            </div>
+          </div>
+
+          <div class="cat-actions">
+            <button class="cat-btn cat-btn-primary" data-cat="utility" data-mode="gerar">
+              <span class="cat-btn-icon">✏️</span> Gerar templates
+            </button>
+            <button class="cat-btn" data-cat="utility" data-mode="fraseologia">
+              <span class="cat-btn-icon">📋</span> A partir da minha fraseologia
+            </button>
+            <button class="cat-btn" data-cat="utility" data-mode="analisar">
+              <span class="cat-btn-icon">🔍</span> Analisar aprovação Utility
+            </button>
+          </div>
+        </div>
+
+        <!-- Card MARKETING -->
+        <div class="cat-card cat-marketing">
+          <div class="cat-top">
+            <span class="cat-icon">📢</span>
+            <span class="cat-pill cat-pill-marketing">MARKETING</span>
+          </div>
+          <h3 class="cat-title">Promocional &amp; Comercial</h3>
+          <p class="cat-desc">Mensagens com apelo comercial e cobrança ativa. Requer opt-in.</p>
+          <ul class="cat-list">
+            <li>Fraseologias de cobrança ativa</li>
+            <li>Avisos de desconto e promoções</li>
+            <li>Ofertas, recuperação e fidelidade</li>
+          </ul>
+
+          <!-- Bloco de preço Marketing -->
+          <div class="cat-preco cat-preco-mkt" id="preco-marketing">
+            <div class="preco-row">
+              <span class="preco-cifrao">$</span>
+              <span class="preco-valor" id="preco-valor-marketing">0.0625</span>
+              <div class="preco-info">
+                <span class="preco-unidade">por mensagem</span>
+                <span class="preco-moeda">USD · Brasil</span>
+              </div>
+              <span class="preco-status-icon" id="preco-status-marketing" title="Carregando...">⏳</span>
+            </div>
+            <div class="preco-footer">
+              <span class="preco-atualizado" id="preco-atualizado-marketing">Verificando preços...</span>
+              <a href="https://business.whatsapp.com/products/platform-pricing?lang=pt_BR&country=Brasil&currency=D%C3%B3lar%20(USD)&category=Marketing"
+                 target="_blank" class="preco-link" title="Ver preços oficiais Meta">↗</a>
+            </div>
+          </div>
+
+          <div class="cat-actions">
+            <button class="cat-btn cat-btn-primary-mkt" data-cat="marketing" data-mode="gerar">
+              <span class="cat-btn-icon">✏️</span> Gerar templates
+            </button>
+            <button class="cat-btn" data-cat="marketing" data-mode="fraseologia">
+              <span class="cat-btn-icon">📋</span> A partir da minha fraseologia
+            </button>
+            <button class="cat-btn" data-cat="marketing" data-mode="analisar">
+              <span class="cat-btn-icon">🔍</span> Analisar aprovação Utility
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PANEL 1: Tipo de Mensagem -->
+    <section class="panel hidden" id="panel-1">
+      <div class="panel-nav">
+        <button class="btn-back" id="btn-back-0">← Início</button>
+      </div>
+      <div class="panel-header">
+        <h2 class="panel-title">Selecione o tipo de mensagem</h2>
+        <p class="panel-desc" id="panel-1-desc"></p>
+      </div>
+      <div class="tipos-grid" id="tipos-grid"></div>
+    </section>
+
+    <!-- PANEL 2: Variáveis -->
+    <section class="panel hidden" id="panel-2">
+      <div class="panel-nav">
+        <button class="btn-back" id="btn-back-1">← Voltar</button>
+      </div>
+      <div class="panel-header">
+        <h2 class="panel-title" id="panel-2-title">Variáveis</h2>
+        <p class="panel-desc">Marque apenas as variáveis disponíveis no seu sistema. Templates funcionam sem variáveis.</p>
+      </div>
+      <div class="variaveis-grid" id="variaveis-grid"></div>
+      <div class="generate-section">
+        <div class="vars-count-wrap">
+          <span class="vars-count" id="vars-selected-count">Nenhuma variável selecionada</span>
+          <button class="btn-clear-vars" id="btn-clear-vars">Limpar tudo</button>
+        </div>
+        <button class="btn-generate" id="btn-generate">
+          <span>Gerar 5 Templates</span><span class="btn-arrow">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PANEL 3: Resultado (templates gerados) -->
+    <section class="panel hidden" id="panel-3">
+      <div class="panel-nav">
+        <button class="btn-back" id="btn-back-2">← Alterar variáveis</button>
+        <button class="btn-back btn-back-alt" id="btn-novo-tipo">↺ Novo tipo</button>
+        <button class="btn-back btn-back-home" id="btn-home">⌂ Início</button>
+      </div>
+      <div class="result-meta" id="result-meta"></div>
+      <div class="justificativa-box" id="justificativa-box"></div>
+      <div class="templates-grid" id="templates-grid"></div>
+      <div class="result-actions">
+        <button class="btn-copy-all" id="btn-copy-all">Copiar todos os templates</button>
+      </div>
+    </section>
+
+    <!-- PANEL 4: A partir da minha fraseologia -->
+    <section class="panel hidden" id="panel-4">
+      <div class="panel-nav">
+        <button class="btn-back" id="btn-back-4">← Início</button>
+      </div>
+      <div class="panel-header">
+        <div class="panel-cat-tag" id="panel-4-cat-tag"></div>
+        <h2 class="panel-title">A partir da minha fraseologia</h2>
+        <p class="panel-desc">Cole sua mensagem existente. O sistema gera 5 variações mantendo a essência do conteúdo com diferentes estruturas.</p>
+      </div>
+      <div class="textarea-wrap">
+        <textarea id="textarea-fraseologia" class="textarea-input" rows="5"
+          placeholder="Ex: Olá João! Seu pedido foi confirmado e será entregue até amanhã. Protocolo: 12345."></textarea>
+        <div class="textarea-meta">
+          <span id="fraseologia-chars">0 caracteres</span>
+          <span class="textarea-tip">Variáveis como {{nome}} são preservadas nas variações</span>
+        </div>
+      </div>
+      <button class="btn-generate" id="btn-gerar-variacoes">
+        <span>Gerar 5 Variações</span><span class="btn-arrow">→</span>
+      </button>
+    </section>
+
+    <!-- PANEL 5: Analisar aprovação Utility -->
+    <section class="panel hidden" id="panel-5">
+      <div class="panel-nav">
+        <button class="btn-back" id="btn-back-5">← Início</button>
+      </div>
+      <div class="panel-header">
+        <h2 class="panel-title">Analisar aprovação Utility</h2>
+        <p class="panel-desc">Cole qualquer fraseologia para ver o score de aprovação, problemas detectados e sugestões de melhoria.</p>
+      </div>
+      <div class="textarea-wrap">
+        <textarea id="textarea-analise" class="textarea-input" rows="5"
+          placeholder="Cole aqui a fraseologia que deseja analisar..."></textarea>
+        <div class="textarea-meta">
+          <span id="analise-chars">0 caracteres</span>
+        </div>
+      </div>
+      <button class="btn-generate" id="btn-analisar">
+        <span>Analisar</span><span class="btn-arrow">→</span>
+      </button>
+      <div class="analise-resultado hidden" id="analise-resultado"></div>
+    </section>
+
+  </main>
+
+  <div class="toast" id="toast">Copiado!</div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

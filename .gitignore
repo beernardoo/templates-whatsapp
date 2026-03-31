@@ -1,0 +1,4 @@
+precos-cache.json
+server.log
+node_modules/
+.env

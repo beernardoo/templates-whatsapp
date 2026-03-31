@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "templates-wpp",
+      "runtimeExecutable": "C:\\Program Files\\Adobe\\Adobe Creative Cloud Experience\\libs\\node.exe",
+      "runtimeArgs": ["-e", "require('http').createServer((req,res)=>{const fs=require('fs'),p=require('path'),fp=p.join('C:/Users/User/TemplatesWhatsApp',req.url==='/'?'index.html':req.url);try{const d=fs.readFileSync(fp);const m={'html':'text/html','css':'text/css','js':'application/javascript'};res.writeHead(200,{'Content-Type':m[fp.split('.').pop()]||'text/plain'});res.end(d);}catch(e){res.writeHead(404);res.end('Not found');}}).listen(3031,()=>console.log('Servidor TemplatesWhatsApp rodando em http://localhost:3031'))"],
+      "port": 3031
+    }
+  ]
+}
