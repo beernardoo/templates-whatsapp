@@ -289,3 +289,17 @@ http.createServer((req, res) => {
   console.log('  Local  : http://localhost:' + PORT);
   console.log('  Rede   : http://' + ipLocal + ':' + PORT);
 });
+
+// ============================================================
+// KEEP-ALIVE: ping para manter o serviço ativo no Render Free
+// ============================================================
+if (process.env.RENDER) {
+  const SELF_URL = process.env.RENDER_EXTERNAL_URL || '';
+  if (SELF_URL) {
+    setInterval(() => {
+      const mod = SELF_URL.startsWith('https') ? require('https') : require('http');
+      mod.get(SELF_URL + '/api/precos', () => {}).on('error', () => {});
+    }, 14 * 60 * 1000); // a cada 14 minutos
+    console.log('[Keep-alive] Ping automático ativado para ' + SELF_URL);
+  }
+}
