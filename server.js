@@ -264,6 +264,92 @@ http.createServer((req, res) => {
     return;
   }
 
+  // POST /api/reescrever-utility — reescreve com Claude IA mantendo nome e contexto
+  if (req.url === '/api/reescrever-utility' && req.method === 'POST') {
+    let body = '';
+    req.on('data', d => { body += d; });
+    req.on('end', async () => {
+      try {
+        const { texto } = JSON.parse(body);
+        const apiKey = process.env.ANTHROPIC_API_KEY;
+        if (!apiKey) {
+          res.writeHead(503, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+          return res.end(JSON.stringify({ erro: 'ANTHROPIC_API_KEY não configurada. Adicione no painel do Render > Environment.' }));
+        }
+
+        const prompt = `Você é especialista em aprovação de templates WhatsApp Business API (Meta).
+
+Analise a mensagem e reescreva em 5 versões aprovadas como UTILITY (transacional, não comercial).
+
+REGRAS OBRIGATÓRIAS:
+- Substituir nome real por {{nome}} (variável de template WhatsApp)
+- Manter referência explícita ao contato anterior (telefone, e-mail ou WhatsApp)
+- Tom completamente neutro, operacional e factual — zero persuasão
+- PROIBIDO: aproveite, oferta, promoção, desconto, não perca, chance, oportunidade, exclusivo, imperdível
+- OBRIGATÓRIO: "conforme contato realizado", "dando continuidade", "informamos", "registramos"
+- Preservar dados factuais: valor em R$, nome da empresa, finalidade (cobrança/regularização)
+- Cada variação com estratégia de enquadramento diferente
+
+MENSAGEM ORIGINAL:
+${texto}
+
+Retorne SOMENTE JSON válido (sem markdown, sem explicação):
+{"variacoes":[
+{"estrategia":"Continuidade de atendimento","icone":"🔄","desc":"Sequência de contato anterior","texto":"..."},
+{"estrategia":"Registro administrativo","icone":"📋","desc":"Registro formal no cadastro","texto":"..."},
+{"estrategia":"Notificação de sistema","icone":"🔔","desc":"Notificação automática gerada","texto":"..."},
+{"estrategia":"Validação de pendência","icone":"✅","desc":"Verificação de dado cadastral","texto":"..."},
+{"estrategia":"Aviso operacional","icone":"⚙️","desc":"Comunicado de processo interno","texto":"..."}
+]}`;
+
+        const payload = JSON.stringify({
+          model: 'claude-3-5-haiku-20241022',
+          max_tokens: 1500,
+          messages: [{ role: 'user', content: prompt }],
+        });
+
+        const iaResp = await new Promise((resolve, reject) => {
+          const r = https.request({
+            hostname: 'api.anthropic.com',
+            path: '/v1/messages',
+            method: 'POST',
+            headers: {
+              'Content-Type':      'application/json',
+              'x-api-key':         apiKey,
+              'anthropic-version': '2023-06-01',
+              'Content-Length':    Buffer.byteLength(payload),
+            },
+          }, r2 => {
+            let data = '';
+            r2.on('data', d => { data += d; });
+            r2.on('end', () => resolve({ status: r2.statusCode, data }));
+          });
+          r.on('error', reject);
+          r.setTimeout(30000, () => { r.destroy(); reject(new Error('Timeout')); });
+          r.write(payload);
+          r.end();
+        });
+
+        const anthropic = JSON.parse(iaResp.data);
+        if (iaResp.status !== 200) throw new Error(anthropic.error?.message || 'HTTP ' + iaResp.status);
+
+        const raw = anthropic.content[0].text.trim()
+          .replace(/^```json?\s*/i, '').replace(/\s*```$/, '').trim();
+        const resultado = JSON.parse(raw);
+
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify(resultado));
+        console.log('[IA Rewrite] ✅ OK para texto de', texto.length, 'chars');
+
+      } catch (err) {
+        console.error('[IA Rewrite] ❌', err.message);
+        res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({ erro: err.message }));
+      }
+    });
+    return;
+  }
+
   // Arquivos estáticos
   const url      = req.url === '/' ? '/index.html' : req.url.split('?')[0];
   const filePath = path.join(DIR, url);

@@ -858,9 +858,19 @@ function exibirAnalise(resultado, textoOriginal) {
 
     <!-- ETAPA 7: 5 variações estratégicas -->
     <div class="variacoes-estrategicas">
-      <h3 class="analise-section-title">🎯 5 variações com estratégias distintas</h3>
-      ${varHtml}
+      <div class="var-ia-header">
+        <h3 class="analise-section-title">🎯 5 variações estratégicas</h3>
+        <button class="btn-ia" id="btn-ia-reescrever">✨ Reescrever com IA</button>
+      </div>
+      <p class="var-ia-hint">IA reescreve semanticamente mantendo <code>{{nome}}</code> e o contexto do contato anterior</p>
+      <div class="var-cards-wrapper">
+        ${varHtml}
+      </div>
     </div>`;
+
+  // Botão IA
+  document.getElementById('btn-ia-reescrever')?.addEventListener('click', () =>
+    reescreverComIA(textoOriginal));
 
   // Eventos — versão reescrita
   document.getElementById('btn-copiar-corrigida')?.addEventListener('click', () => {
@@ -885,6 +895,75 @@ function exibirAnalise(resultado, textoOriginal) {
       gerarVariacoesEspecificas(variacoesEstrategicas[i].texto, 'utility');
     });
   });
+}
+
+async function reescreverComIA(textoOriginal) {
+  const btn = document.getElementById('btn-ia-reescrever');
+  const wrapper = document.querySelector('.var-cards-wrapper');
+  if (!btn || !wrapper) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Reescrevendo...';
+  wrapper.style.opacity = '0.4';
+
+  try {
+    const resp = await fetch('/api/reescrever-utility', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texto: textoOriginal }),
+    });
+    const dados = await resp.json();
+
+    if (dados.erro) {
+      mostrarToast('⚠️ ' + dados.erro);
+      btn.disabled = false;
+      btn.textContent = '✨ Reescrever com IA';
+      wrapper.style.opacity = '1';
+      return;
+    }
+
+    // Reconstrói cards com resultado da IA
+    wrapper.innerHTML = dados.variacoes.map((v, i) => {
+      const risco = avaliarRisco(v.texto, 'utility');
+      return `
+        <div class="var-card ia-card">
+          <div class="var-card-header">
+            <span class="var-card-icone">${v.icone}</span>
+            <div style="flex:1">
+              <span class="var-card-estrategia">${v.estrategia} <span class="ia-badge">IA ✨</span></span>
+              <span class="var-card-desc">${v.desc}</span>
+            </div>
+            <span class="risco-badge risco-${risco.nivel}">${risco.label}</span>
+          </div>
+          <p class="var-card-texto" id="var-ia-${i}">${v.texto}</p>
+          <div class="var-card-actions">
+            <button class="btn-copy btn-copy-sm" data-ia-copy="${i}">Copiar</button>
+            <button class="btn-generate btn-generate-xs" data-ia-gerar="${i}">Gerar variações →</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Bind botões
+    wrapper.querySelectorAll('[data-ia-copy]').forEach(b =>
+      b.addEventListener('click', () => {
+        navigator.clipboard.writeText(dados.variacoes[+b.dataset.iaCopy].texto)
+          .then(() => mostrarToast('Copiado!'));
+      }));
+    wrapper.querySelectorAll('[data-ia-gerar]').forEach(b =>
+      b.addEventListener('click', () =>
+        gerarVariacoesEspecificas(dados.variacoes[+b.dataset.iaGerar].texto, 'utility')));
+
+    wrapper.style.opacity = '1';
+    btn.textContent = '✅ Reescrito com IA';
+    btn.style.cssText = 'background:rgba(57,211,83,0.12);color:#39d353;border-color:rgba(57,211,83,0.4)';
+    mostrarToast('✅ 5 variações reescritas pela IA!');
+
+  } catch (err) {
+    mostrarToast('❌ ' + err.message);
+    btn.disabled = false;
+    btn.textContent = '✨ Reescrever com IA';
+    wrapper.style.opacity = '1';
+  }
 }
 
 function gerarVariacoesEspecificas(texto, cat) {
