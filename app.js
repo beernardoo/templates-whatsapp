@@ -384,9 +384,36 @@ function gerarTemplates() {
 // ============================================================
 // PANEL 4: VARIAÇÕES A PARTIR DE FRASEOLOGIA PRÓPRIA
 // ============================================================
+function limparTextoUtility(texto) {
+  let t = texto;
+  // Aplica todas as substituições de risco
+  for (const [orig, sub] of Object.entries(SUBSTITUICOES)) {
+    const esc = orig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    t = t.replace(new RegExp(esc, 'gi'), sub);
+  }
+  // Remove exclamações excessivas
+  t = t.replace(/!{2,}/g, '.').replace(/([^!])!/g, '$1.');
+  // Normaliza pontuação e espaços
+  t = t.replace(/\s+([.,;:])/g, '$1')
+       .replace(/([.,;:])\s*[!?.,;:]/g, '$1')
+       .replace(/\s{2,}/g, ' ')
+       .replace(/^[,!?;:\s]+/, '')
+       .trim();
+  return t;
+}
+
 function criarVariacoes(texto, cat) {
-  const t   = texto.trim();
-  const sem = t.replace(/^(olá[,!]?\s*|oi[,!]?\s*|prezado\(a\)[,!]?\s*|prezado[,!]?\s*|bom dia[,!]?\s*|boa tarde[,!]?\s*|boa noite[,!]?\s*)/i, '').trim();
+  let t = texto.trim();
+
+  // Para utility: limpar linguagem comercial antes de gerar variações
+  if (cat === 'utility') t = limparTextoUtility(t);
+
+  // Remove saudação + nome: "Olá, JOAO," → resto do texto
+  const sem = t
+    .replace(/^(olá[,!]?\s*|oi[,!]?\s*|prezado\(a\)[,!]?\s*|prezado[,!]?\s*|bom dia[,!]?\s*|boa tarde[,!]?\s*|boa noite[,!]?\s*)/i, '')
+    .replace(/^([A-Za-záéíóúàâêîôûãõçÁÉÍÓÚÀÂÊÎÔÛÃÕÇ]+[,!]?\s*)/, '')
+    .trim();
+
   const uc  = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
   const pt  = s => s && !/[.!?]$/.test(s) ? s + '.' : s;
   const lc  = s => s.charAt(0).toLowerCase() + s.slice(1);
@@ -394,7 +421,7 @@ function criarVariacoes(texto, cat) {
 
   if (cat === 'utility') {
     return [
-      pt(t),
+      pt(sem),
       core,
       pt('Informamos que ' + lc(sem)),
       pt('Comunicamos que ' + lc(sem)),
@@ -403,9 +430,9 @@ function criarVariacoes(texto, cat) {
   } else {
     return [
       pt(t),
-      pt(core + ' Não perca essa oportunidade'),
+      pt(core + '. Não perca essa oportunidade'),
       pt('Atenção! ' + core),
-      pt(core + ' Entre em contato agora'),
+      pt(core + '. Entre em contato agora'),
       pt('Oferta especial: ' + lc(sem)),
     ];
   }
@@ -482,6 +509,9 @@ const SUBSTITUICOES = {
   'não perca essa oferta imperdível': '',
   'não perca essa oportunidade': '',
   'aproveite essa oportunidade': '',
+  'aproveite essa chance': '',
+  'aproveite esse momento': '',
+  'por apenas': 'de',
   'frete grátis': '',
   'black friday': '',
   'desconto especial': '',
